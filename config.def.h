@@ -5,6 +5,7 @@ static const unsigned int borderpx  = 2;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
 static const unsigned int systrayonleft = 1;    /* 0: systray in the right corner, >0: systray on left of status text */
+static const unsigned int systraypadding = 80;  /* systray padding */
 static const unsigned int systrayspacing = 1;   /* systray spacing */
 static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
 static const int showsystray        = 1;        /* 0 means no systray */
@@ -23,10 +24,10 @@ static const char col_cyan_b[]      = "#00ddff";
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { col_white, col_black, col_black },
-	[SchemeSel]  = { col_white, col_cyan,  col_cyan_b},
+	[SchemeSel]  = { col_black, col_white,  col_white},
 };
 
-#define HOME "/home/[your username]"
+#define HOME "/home/[user name]"
 
 static const char *const autostart[] = {
 	"bash", "-c", HOME"/.config/dwm/bash_script/autostart.sh", NULL,
@@ -77,6 +78,14 @@ static const Layout layouts[] = {
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 static const char *termcmd[]  = { "xfce4-terminal", "--disable-server", NULL };
+
+/* commands spawned when clicking statusbar, the mouse button pressed is exported as BUTTON */
+static const StatusCmd statuscmds[] = {
+	{ "~/.config/dwm/dunst/mode_switcher.sh", 1 },
+	{ "~/.config/dwm/dunst/mic_mute.sh", 2 },
+	{ "pavucontrol", 3 },
+};
+static const char *statuscmd[] = { "/bin/sh", "-c", NULL, NULL };
 
 /*First arg only serves to match against key in rules*/
 static const char *scratchpadcmd[] = {"t", TERMINAL, "-T", "spterm", "--geometry", "60x16", NULL};
@@ -177,10 +186,9 @@ static const Button buttons[] = {
 	/* click                event mask      button          function        argument */
 	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
 	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[1]} },
-	{ ClkStatusText,        MODKEY,         Button1,        spawn,          {.v = (const char*[]){ HOME"/.config/dwm/dunst/mode_switcher.sh", NULL } } },
-	{ ClkStatusText,        0,              Button1,        spawn,          {.v = (const char*[]){ HOME"/.config/dwm/dunst/volume_mute.sh", NULL } } },
-	{ ClkStatusText,        0,              Button2,        spawn,          {.v = (const char*[]){ "pavucontrol", NULL } } },
-	{ ClkStatusText,        0,              Button3,        spawn,          {.v = (const char*[]){ HOME"/.config/dwm/dunst/mic_mute.sh", NULL } } },
+	{ ClkStatusText,        0,              Button1,        spawn,          {.v = statuscmd } },
+	{ ClkStatusText,        0,              Button2,        spawn,          {.v = statuscmd } },
+	{ ClkStatusText,        0,              Button3,        spawn,          {.v = statuscmd } },
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
 	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
 	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
