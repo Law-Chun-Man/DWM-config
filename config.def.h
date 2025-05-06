@@ -19,14 +19,14 @@ static const char col_gray3[]       = "#bbbbbb";
 static const char col_gray4[]       = "#eeeeee";
 static const char col_white[]       = "#ffffff";
 static const char col_cyan[]        = "#005577";
-static const char col_cyan_b[]      = "#00ffff";
+static const char col_cyan_b[]      = "#00ddff";
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { col_white, col_black, col_black },
 	[SchemeSel]  = { col_white, col_cyan,  col_cyan_b},
 };
 
-#define HOME "your home directory"
+#define HOME "/home/[your username]"
 
 static const char *const autostart[] = {
 	"bash", "-c", HOME"/.config/dwm/bash_script/autostart.sh", NULL,
@@ -34,7 +34,7 @@ static const char *const autostart[] = {
 };
 
 /* tagging */
-static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
+static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -57,26 +57,16 @@ static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen win
 
 static const Layout layouts[] = {
 	{ "[]=",      tile },
-	{ "[M]",      monocle },
+	{ "[0]",      monocle },
 };
-
-/* tag and view current window */
-static void move(const Arg *arg) {
-    tag(arg);
-    view(arg);
-}
-static void movemon(const Arg *arg) {
-    tagmon(arg);
-    focusmon(arg);
-}
 
 /* key definitions */
 #define MODKEY Mod4Mask
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
-	{ MODKEY|ShiftMask,             KEY,      move,           {.ui = 1 << TAG} }, \
-    { MODKEY|ControlMask,           KEY,      tag,            {.ui = 1 << TAG} }, \
-    { MODKEY|ControlMask|ShiftMask, KEY,      toggletag,      {.ui = 1 << TAG} },
+	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
+	{ MODKEY|ShiftMask,             KEY,      tag,            {.ui = 1 << TAG} }, \
+	{ MODKEY|ControlMask|ShiftMask, KEY,      toggletag,      {.ui = 1 << TAG} },
 
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
@@ -133,6 +123,7 @@ static const Key keys[] = {
 	{ ControlMask|Mod1Mask, 	    XK_t,	   spawn,          {.v = termcmd } },
 	{ ControlMask|Mod1Mask, 	    XK_g,	   spawn,          {.v = (const char*[]){ "gnome-boxes", NULL } } },
 	{ ControlMask|Mod1Mask, 	    XK_k,	   spawn,          {.v = (const char*[]){ "kdeconnect-app", NULL } } },
+	{ ControlMask|Mod1Mask, 	    XK_o,	   spawn,          {.v = (const char*[]){ "obs", NULL } } },
 	{ ControlMask|Mod1Mask, 	    XK_y,	   spawn,          {.v = (const char*[]){ BROWSER, "--private-window", "youtube.com", NULL } } },
 	{ ControlMask|Mod1Mask, 	    XK_j,	   spawn,          {.v = (const char*[]){ HOME"/linux_computer/jupyter_file/jupyter.sh", NULL } } },
 	{ ControlMask|Mod1Mask, 	    XK_p,	   spawn,          {.v = (const char*[]){ HOME"/.local/share/JetBrains/Toolbox/apps/pycharm-community/bin/pycharm.sh", NULL } } },
@@ -141,6 +132,7 @@ static const Key keys[] = {
     // scratchpad
 	{ MODKEY,                       XK_Return, togglescratch,  {.v = scratchpadcmd } },
 	{ MODKEY,                    XK_semicolon, togglescratch,  {.v = thunarcmd } },
+	{ MODKEY,                       XK_ntilde, togglescratch,  {.v = thunarcmd } },
 	{ ControlMask|Mod1Mask,         XK_c,      togglescratch,  {.v = calccmd } },
 	{ 0,                     XF86XK_Favorites, togglescratch,  {.v = calccmd } },
 	{ ControlMask|Mod1Mask,         XK_v,      togglescratch,  {.v = vpncmd } },
@@ -162,10 +154,8 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_equal,  tag,            {.ui = ~0 } },
 	{ MODKEY,                       XK_i,      focusmon,       {.i = -1 } },
 	{ MODKEY,                       XK_d,      focusmon,       {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_i,      movemon,        {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_d,      movemon,        {.i = +1 } },
-	{ MODKEY|ControlMask,           XK_i,      tagmon,         {.i = -1 } },
-	{ MODKEY|ControlMask,           XK_d,      tagmon,         {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_i,      tagmon,         {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_d,      tagmon,         {.i = +1 } },
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)

@@ -12,3 +12,4 @@ fi
 echo $NEW_GOVERNOR | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
 
 dunstify -r 1236 -I ~/.config/dwm/dunst/uninterruptible-power-supply.png -t 3000 "$NEW_GOVERNOR"
+

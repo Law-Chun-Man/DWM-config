@@ -1,14 +1,15 @@
 #!/bin/bash
 
-INTERNET=$(mktemp -p /dev/shm)
-WIFI=$(mktemp -p /dev/shm)
-BAT=$(mktemp -p /dev/shm)
-CPU=$(mktemp -p /dev/shm)
-MEM=$(mktemp -p /dev/shm)
+mkdir /dev/shm/status_bar
+INTERNET=$(mktemp -p /dev/shm/status_bar)
+WIFI=$(mktemp -p /dev/shm/status_bar)
+BAT=$(mktemp -p /dev/shm/status_bar)
+CPU=$(mktemp -p /dev/shm/status_bar)
+MEM=$(mktemp -p /dev/shm/status_bar)
 trap 'rm -f "$INTERNET" "$WIFI" "$BAT" "$CPU" "$MEM"' EXIT
-VOLUME="/dev/shm/tmp.VOLUME"
-MUTE="/dev/shm/tmp.MUTE"
-MIC="/dev/shm/tmp.MIC"
+VOLUME="/dev/shm/status_bar/tmp.VOLUME"
+MUTE="/dev/shm/status_bar/tmp.MUTE"
+MIC="/dev/shm/status_bar/tmp.MIC"
 DATE=$(date +"%a %d %b")
 echo "$(pactl get-sink-volume @DEFAULT_SINK@ | awk '{print $5}')" > $VOLUME
 echo "" > $MUTE
@@ -29,7 +30,7 @@ while true; do
     esac
     
     echo "${symbol} ${capacity}%" > "$BAT"
-    sleep 30
+    sleep 60
 done
 ) &
 
@@ -126,6 +127,14 @@ while true; do
          }' /proc/meminfo)
     echo " $mem_usage"  > "$MEM"
     sleep 2
+done
+) &
+
+# Volume
+(
+while true; do
+    echo "$(pactl get-sink-volume @DEFAULT_SINK@ | grep -oP '\d+%' | head -n 1)" > /dev/shm/status_bar/tmp.VOLUME
+    sleep 60
 done
 ) &
 
